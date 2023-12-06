@@ -17,7 +17,7 @@ public class Laptop {
     private String SSD;
     private String thicknesses;
     private Integer pairings;
-//    private String fuselageMaterial;
+    private String fuselageMaterial;
 //    private String mechanicalDrive;
 //    private String RAM;
 //    private String screenSize;

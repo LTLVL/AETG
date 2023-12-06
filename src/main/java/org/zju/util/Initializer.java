@@ -2,16 +2,17 @@ package org.zju.util;
 
 import com.alibaba.fastjson2.JSON;
 
-import java.util.*;
-import java.util.function.Predicate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class Initializer {
-    private Initializer() {
+    public Initializer(int totalArgs) {
+        this.totalArgs = totalArgs;
     }
 
-    private static final int totalArgs = initLaptopMap().size();
-    public static ArrayList<ArrayList<Integer>> laptopUncoveredPairs = new ArrayList<>();
-    public static ArrayList<ArrayList<Integer>> tempIntegers = new ArrayList<>() {{
+    public int totalArgs;
+    public ArrayList<ArrayList<Integer>> tempIntegers = new ArrayList<>() {{
         add(new ArrayList<>());
     }};
 
@@ -22,7 +23,7 @@ public class Initializer {
      * @param t
      * @param count
      */
-    public static void initTemp(int t, int count) {
+    public void initTemp(int t, int count) {
         if (count == t) {
             return;
         }
@@ -45,7 +46,7 @@ public class Initializer {
         initTemp(t, count + 1);
     }
 
-    public static void initLaptopUncoveredPairs(ArrayList<Integer> integers, ArrayList<ArrayList<Integer>> arrayLists, int count) {
+    public void initUncoveredPairs(ArrayList<Integer> integers, ArrayList<ArrayList<Integer>> arrayLists, int count) {
         if (count == integers.size()) {
             return;
         }
@@ -71,7 +72,7 @@ public class Initializer {
                 }
             }
         }
-        initLaptopUncoveredPairs(integers, arrayLists, count + 1);
+        initUncoveredPairs(integers, arrayLists, count + 1);
     }
 
     /**
@@ -86,7 +87,7 @@ public class Initializer {
         laptopList.add(getEnergyEfficiencyClassMap());
         laptopList.add(getSSDMap());
         laptopList.add(getThicknessesMap());
-//        laptopList.add(getFuselageMaterialMap());
+        laptopList.add(getFuselageMaterialMap());
 //        laptopList.add(getMechanicalDriveMap());
 //        laptopList.add(getRAMMap());
 //        laptopList.add(getScreenSizeMap());
