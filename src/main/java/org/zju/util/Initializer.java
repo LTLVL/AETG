@@ -51,7 +51,8 @@ public class Initializer {
             return;
         }
         if (count == 0) {
-            for (int i = 0; i < initLaptopMap().get(0).size(); i++) {
+
+            for (int i = 0; i < initLaptopMap().get(integers.get(0)).size(); i++) {
                 ArrayList<Integer> list = new ArrayList<>() {{
                     for (int j = 0; j < totalArgs; j++) {
                         add(-1);
@@ -72,6 +73,7 @@ public class Initializer {
                 }
             }
         }
+        arrayLists.removeIf(ArrayList::isEmpty);
         initUncoveredPairs(integers, arrayLists, count + 1);
     }
 
@@ -88,10 +90,10 @@ public class Initializer {
         laptopList.add(getSSDMap());
         laptopList.add(getThicknessesMap());
         laptopList.add(getFuselageMaterialMap());
-//        laptopList.add(getMechanicalDriveMap());
-//        laptopList.add(getRAMMap());
-//        laptopList.add(getScreenSizeMap());
-//        laptopList.add(getScreenRefreshRateMap());
+        laptopList.add(getMechanicalDriveMap());
+        laptopList.add(getRAMMap());
+        laptopList.add(getScreenSizeMap());
+        laptopList.add(getScreenRefreshRateMap());
         return laptopList;
     }
 

@@ -1,12 +1,18 @@
 package org.zju;
 
+import org.zju.domain.Laptop;
 import org.zju.util.Algorithm;
+import org.zju.util.ResultHandler;
+
+import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) {
         int t = check_t(args);
         if (t != -1) {
-            Algorithm.run(t);
+            Algorithm laotop = new Algorithm();
+            ArrayList<Laptop> laptops = laotop.run(t, Laptop.class);
+            ResultHandler.handleLaptop(laptops);
         }
     }
 

@@ -1,60 +1,72 @@
 package org.zju.util;
 
-import com.alibaba.fastjson2.JSON;
 import org.zju.domain.Case;
+import org.zju.domain.Laptop;
 
 import java.util.*;
-import java.util.function.Predicate;
 
 public class Algorithm {
-    private static final ArrayList<Integer[]> laptopCoveredPairs = new ArrayList<>();
-    private static final ArrayList<ArrayList<Integer>> laptopUnCoveredPairs = new ArrayList<>();
-    private static final HashMap<String, Integer> countTable = new HashMap<>();
-    private static final int M = 50;
-    private static final int totalArgs = 6;
-    private static int T = 0;
+    private final ArrayList<Integer[]> coveredPairs = new ArrayList<>();
+    private final ArrayList<Integer> pairings = new ArrayList<>();
+    private final ArrayList<ArrayList<Integer>> unCoveredPairs = new ArrayList<>();
+    private final HashMap<String, Integer> countTable = new HashMap<>();
+    private final int M = 50;
+    private final int totalArgs = 10;
+    private int T = 0;
 
     /**
      * 算法主流程
      *
      * @param t
      */
-    public static void run(int t) {
+    public ArrayList run(int t, Class c) {
         T = t;
         Initializer lapTopinitializer = new Initializer(totalArgs);
         lapTopinitializer.initTemp(t, 0);
-        lapTopinitializer.tempIntegers.removeIf(ArrayList::isEmpty);
+
 
         //所有 t 个变量的等价类组合的用例集
         for (ArrayList<Integer> tempInteger : lapTopinitializer.tempIntegers) {
             ArrayList<ArrayList<Integer>> arrayLists = new ArrayList<>();
             lapTopinitializer.initUncoveredPairs(tempInteger, arrayLists, 0);
-            laptopUnCoveredPairs.addAll(arrayLists);
+            unCoveredPairs.addAll(arrayLists);
         }
         //第一个测试用例固定选取
         Integer[] integers = new Integer[totalArgs];
-        for (int i = 0; i < totalArgs; i++) {
-            integers[i] = 0;
-        }
+        Arrays.fill(integers, 0);
 
-        laptopCoveredPairs.add(integers);
-        int pairings = updateUncoveredPairs(integers); //返回该测试用例覆盖的pair
+
+        int pairing = updateUncoveredPairs(integers); //返回该测试用例覆盖的pair
+        coveredPairs.add(integers);
+        pairings.add(pairing);
 
         //得到未覆盖集的次数统计
         ArrayList<Case> cases = statistic();
-        iterate(cases);
+        while (cases.size() != 0) {
+            cases = iterate(cases);
+        }
+        if (c.equals(Laptop.class)) {
+            ArrayList<Laptop> laptops = new ArrayList<>();
+            for (int i = 0; i < coveredPairs.size(); i++) {
+                Integer[] pair = coveredPairs.get(i);
+                laptops.add(new Laptop(i + 1, pair[0], pair[1], pair[2], pair[3], pair[4]
+                        , pair[5], pair[6], pair[7], pair[8], pair[9], pairings.get(i)));
+            }
+            return laptops;
+        } else {
 
-
-        System.out.println("!!");
+        }
+        return null;
 
     }
 
-    private static ArrayList<Case> statistic() {
-        for (ArrayList<Integer> laptopUnCoveredPair : laptopUnCoveredPairs) {
-            for (int j = 0; j < laptopUnCoveredPair.size(); j++) {
-                if (laptopUnCoveredPair.get(j) != -1) {
+    private ArrayList<Case> statistic() {
+        countTable.clear();
+        for (ArrayList<Integer> unCoveredPair : unCoveredPairs) {
+            for (int j = 0; j < unCoveredPair.size(); j++) {
+                if (unCoveredPair.get(j) != -1) {
                     StringBuilder key = new StringBuilder(j + ",");
-                    key.append(laptopUnCoveredPair.get(j));
+                    key.append(unCoveredPair.get(j));
                     if (!countTable.containsKey(key.toString())) {
                         countTable.put(key.toString(), 1);
                     } else {
@@ -74,9 +86,9 @@ public class Algorithm {
         return cases;
     }
 
-    private static int updateUncoveredPairs(Integer[] integers) {
-        int oldSize = laptopUnCoveredPairs.size();
-        Iterator<ArrayList<Integer>> iterator = laptopUnCoveredPairs.iterator();
+    private int updateUncoveredPairs(Integer[] integers) {
+        int oldSize = unCoveredPairs.size();
+        Iterator<ArrayList<Integer>> iterator = unCoveredPairs.iterator();
         while (iterator.hasNext()) {
             ArrayList<Integer> next = iterator.next();
             int count = 0;
@@ -89,17 +101,17 @@ public class Algorithm {
                 iterator.remove();
             }
         }
-        return oldSize - laptopUnCoveredPairs.size();
+        return oldSize - unCoveredPairs.size();
     }
 
-    private static int getCoveredPairs(Integer[] integers) {
+    private int getCoveredPairs(Integer[] integers) {
         int size = 0;
-        Iterator<ArrayList<Integer>> iterator = laptopUnCoveredPairs.iterator();
+        Iterator<ArrayList<Integer>> iterator = unCoveredPairs.iterator();
         while (iterator.hasNext()) {
             ArrayList<Integer> next = iterator.next();
             int count = 0;
             for (int i = 0; i < next.size(); i++) {
-                if (next.get(i) == -1 || integers[i] == null || Objects.equals(next.get(i), integers[i])) {
+                if (next.get(i) == -1 || Objects.equals(next.get(i), integers[i])) {
                     count++;
                 }
             }
@@ -110,39 +122,41 @@ public class Algorithm {
         return size;
     }
 
-    private static void iterate(ArrayList<Case> cases) {
+    private ArrayList<Case> iterate(ArrayList<Case> cases) {
         ArrayList<Integer[]> candidates = new ArrayList<>(M);
         for (int i = 0; i < M; i++) {
-            candidates.add(new Integer[T]);
+            candidates.add(new Integer[totalArgs]);
         }
-        List<Case> caseList = cases.stream().filter(new Predicate<Case>() {
-            @Override
-            public boolean test(Case aCase) {
-                return aCase.getPosition() == 0;
-            }
-        }).toList();
-        Case aCase = caseList.stream().max(new Comparator<Case>() {
-            @Override
-            public int compare(Case o1, Case o2) {
-                return o2.getValue() - o1.getValue();
-            }
-        }).get();
+        Case aCase = cases.stream().max(Comparator.comparingInt(Case::getCount)).get();
         for (Integer[] candidate : candidates) {
-            candidate[0] = aCase.getValue();
+            candidate[aCase.getPosition()] = aCase.getValue();
         }
+        //获取M个候选用例
+        for (int i = 0; i < totalArgs; i++) {
+            if (i != aCase.getPosition()) {
+                int finalI = i;
+//                List<Case> list = cases.stream().filter(aCase1 -> aCase1.getPosition() == finalI).toList();
+//                List<Case> sortedList = list.stream().sorted((o1, o2) -> o2.getCount() - o1.getCount()).toList();
 
-        for (int i = 1; i < totalArgs; i++) {
-            int finalI = i;
-            List<Case> list = cases.stream().filter(aCase1 -> aCase1.getPosition() == finalI).toList();
-            List<Case> sortedList = list.stream().sorted((o1, o2) -> o2.getCount() - o1.getCount()).toList();
-            for (int j = 0; j < 50; j++) {
-                    candidates.get(j)[i] = sortedList.get(j % sortedList.size()).getValue();
+                for (int j = 0; j < 50; j++) {
+                    candidates.get(j)[i] = j % Initializer.initLaptopMap().get(i).size();
+                }
             }
         }
 
-
-        System.out.println("!");
-
+        HashMap<Integer[], Integer> map = new HashMap<>();
+        for (Integer[] candidate : candidates) {
+            map.put(candidate, getCoveredPairs(candidate));
+        }
+        List<Map.Entry<Integer[], Integer>> list = new ArrayList<>(map.entrySet()); //转换为list
+        //选出用例
+        list.sort((o1, o2) -> o2.getValue().compareTo(o1.getValue()));
+        Integer[] chosenCase = list.get(0).getKey();
+        int pairing = updateUncoveredPairs(chosenCase); //返回该测试用例覆盖的pair
+        pairings.add(pairing);
+        coveredPairs.add(chosenCase);
+        //得到未覆盖集的次数统计
+        return statistic();
     }
 
 }
