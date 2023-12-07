@@ -8,6 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
+/**
+ * 用于初始化ucps
+ * @author Tao
+ * @date 2023/12/07
+ */
 public class Initializer {
     //true表示处理笔记本
     private final boolean flag;
@@ -24,8 +29,7 @@ public class Initializer {
 
 
     /**
-     * 排列组合
-     *
+     * M选t的排列组合
      * @param t
      * @param count
      */
@@ -52,6 +56,12 @@ public class Initializer {
         initTemp(t, count + 1);
     }
 
+    /**
+     * 根据排列组合初始化ucps
+     * @param integers
+     * @param arrayLists
+     * @param count
+     */
     public void initUncoveredPairs(ArrayList<Integer> integers, ArrayList<ArrayList<Integer>> arrayLists, int count) {
         if (count == integers.size()) {
             return;
@@ -88,8 +98,7 @@ public class Initializer {
     }
 
     /**
-     * 初始化笔记本Map
-     *
+     * 初始化笔记本List
      * @return {@link Map}<{@link String}, {@link List}<{@link String}>>
      */
     public static ArrayList<List<String>> initLaptopList() {
@@ -108,7 +117,7 @@ public class Initializer {
     }
 
     /**
-     * 初始化旅程Map
+     * 初始化旅程List
      *
      * @return {@link Map}<{@link String}, {@link List}<{@link String}>>
      */

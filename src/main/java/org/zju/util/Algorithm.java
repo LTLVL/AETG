@@ -7,6 +7,11 @@ import org.zju.domain.Trip;
 import java.util.*;
 import java.util.function.Predicate;
 
+/**
+ * 抽象算法类
+ * @author Tao
+ * @date 2023/12/07
+ */
 public class Algorithm {
     private final ArrayList<Integer[]> coveredPairs = new ArrayList<>();
     private final ArrayList<Integer> pairings = new ArrayList<>();
@@ -17,6 +22,11 @@ public class Algorithm {
     private final int T;
     private final boolean flag;
 
+    /**
+     * flag为true代表laptop的测试用例生成，false为trip
+     * @param t
+     * @param flag
+     */
     public Algorithm(int t, boolean flag) {
         this.flag = flag;
         this.T = t;
@@ -27,14 +37,14 @@ public class Algorithm {
      * 算法主流程
      */
     public ArrayList run() {
-        Initializer lapTopinitializer = new Initializer(totalArgs, flag);
-        lapTopinitializer.initTemp(T, 0);
+        Initializer initializer = new Initializer(totalArgs, flag);
+        initializer.initTemp(T, 0);
 
 
         //所有 t 个变量的等价类组合的用例集
-        for (ArrayList<Integer> tempInteger : lapTopinitializer.tempIntegers) {
+        for (ArrayList<Integer> tempInteger : initializer.tempIntegers) {
             ArrayList<ArrayList<Integer>> arrayLists = new ArrayList<>();
-            lapTopinitializer.initUncoveredPairs(tempInteger, arrayLists, 0);
+            initializer.initUncoveredPairs(tempInteger, arrayLists, 0);
             unCoveredPairs.addAll(arrayLists);
         }
         //第一个测试用例固定选取
@@ -72,6 +82,10 @@ public class Algorithm {
         }
     }
 
+    /**
+     * 统计目前的ucps
+     * @return {@link ArrayList}<{@link Case}>
+     */
     private ArrayList<Case> statistic() {
         countTable.clear();
         for (ArrayList<Integer> unCoveredPair : unCoveredPairs) {
@@ -97,6 +111,11 @@ public class Algorithm {
         return cases;
     }
 
+    /**
+     * 新增测试用例后，将其覆盖的pairs从ucps种去除
+     * @param integers
+     * @return int
+     */
     private int updateUncoveredPairs(Integer[] integers) {
         int oldSize = unCoveredPairs.size();
         Iterator<ArrayList<Integer>> iterator = unCoveredPairs.iterator();
@@ -115,6 +134,11 @@ public class Algorithm {
         return oldSize - unCoveredPairs.size();
     }
 
+    /**
+     * 统计该候选用例能覆盖的ucps数量
+     * @param integers
+     * @return int
+     */
     private int getCoveredPairs(Integer[] integers) {
         int size = 0;
         Iterator<ArrayList<Integer>> iterator = unCoveredPairs.iterator();
@@ -133,6 +157,11 @@ public class Algorithm {
         return size;
     }
 
+    /**
+     * 不停迭代选择测试用例，直至ucps为空
+     * @param cases
+     * @return {@link ArrayList}<{@link Case}>
+     */
     private ArrayList<Case> iterate(ArrayList<Case> cases) {
         ArrayList<Integer[]> candidates = new ArrayList<>(M);
         for (int i = 0; i < M; i++) {

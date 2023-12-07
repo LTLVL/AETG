@@ -27,7 +27,7 @@ public class Main {
     }
 
     /**
-     * 校验参数t是否合法，将其约束在2-10
+     * 校验参数t是否合法，将其约束在2-8
      *
      * @param strings args
      * @return int 不合法则返回-1
@@ -43,6 +43,6 @@ public class Main {
         } catch (NumberFormatException e) {
             System.out.println("请输入正确的t参数！");
         }
-        return t > 1 && t < 10 ? t : -1;
+        return t > 1 && t < 8 ? t : -1;
     }
 }
