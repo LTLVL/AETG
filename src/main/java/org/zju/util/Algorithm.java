@@ -2,8 +2,10 @@ package org.zju.util;
 
 import org.zju.domain.Case;
 import org.zju.domain.Laptop;
+import org.zju.domain.Trip;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 public class Algorithm {
     private final ArrayList<Integer[]> coveredPairs = new ArrayList<>();
@@ -11,18 +13,22 @@ public class Algorithm {
     private final ArrayList<ArrayList<Integer>> unCoveredPairs = new ArrayList<>();
     private final HashMap<String, Integer> countTable = new HashMap<>();
     private final int M = 50;
-    private final int totalArgs = 10;
+    private final int totalArgs;
     private int T = 0;
+    private final boolean flag;
+
+    public Algorithm(int t, boolean flag) {
+        this.flag = flag;
+        this.T = t;
+        this.totalArgs = this.flag ? Initializer.initLaptopList().size() : Initializer.initTripList().size();
+    }
 
     /**
      * 算法主流程
-     *
-     * @param t
      */
-    public ArrayList run(int t, Class c) {
-        T = t;
-        Initializer lapTopinitializer = new Initializer(totalArgs);
-        lapTopinitializer.initTemp(t, 0);
+    public ArrayList run() {
+        Initializer lapTopinitializer = new Initializer(totalArgs, flag);
+        lapTopinitializer.initTemp(T, 0);
 
 
         //所有 t 个变量的等价类组合的用例集
@@ -45,7 +51,7 @@ public class Algorithm {
         while (cases.size() != 0) {
             cases = iterate(cases);
         }
-        if (c.equals(Laptop.class)) {
+        if (flag) {
             ArrayList<Laptop> laptops = new ArrayList<>();
             for (int i = 0; i < coveredPairs.size(); i++) {
                 Integer[] pair = coveredPairs.get(i);
@@ -54,10 +60,14 @@ public class Algorithm {
             }
             return laptops;
         } else {
-
+            ArrayList<Trip> trips = new ArrayList<>();
+            for (int i = 0; i < coveredPairs.size(); i++) {
+                Integer[] pair = coveredPairs.get(i);
+                trips.add(new Trip(i + 1, pair[0], pair[1], pair[2], pair[3], pair[4]
+                        , pair[5], pair[6], pair[7], pairings.get(i)));
+            }
+            return trips;
         }
-        return null;
-
     }
 
     private ArrayList<Case> statistic() {
@@ -128,9 +138,16 @@ public class Algorithm {
             candidates.add(new Integer[totalArgs]);
         }
         Case aCase = cases.stream().max(Comparator.comparingInt(Case::getCount)).get();
-        for (Integer[] candidate : candidates) {
-            candidate[aCase.getPosition()] = aCase.getValue();
+        List<Case> caseList = cases.stream().filter(new Predicate<Case>() {
+            @Override
+            public boolean test(Case case1) {
+                return case1.getCount() == aCase.getCount();
+            }
+        }).toList();
+        for (int i = 0; i < candidates.size(); i++) {
+            candidates.get(i)[aCase.getPosition()] = caseList.get(i % caseList.size()).getValue();
         }
+
         //获取M个候选用例
         for (int i = 0; i < totalArgs; i++) {
             if (i != aCase.getPosition()) {
@@ -139,7 +156,12 @@ public class Algorithm {
 //                List<Case> sortedList = list.stream().sorted((o1, o2) -> o2.getCount() - o1.getCount()).toList();
 
                 for (int j = 0; j < 50; j++) {
-                    candidates.get(j)[i] = j % Initializer.initLaptopMap().get(i).size();
+                    if (flag) {
+                        candidates.get(j)[i] = j % Initializer.initLaptopList().get(i).size();
+                    } else {
+                        candidates.get(j)[i] = j % Initializer.initTripList().get(i).size();
+                    }
+
                 }
             }
         }

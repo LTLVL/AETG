@@ -2,13 +2,17 @@ package org.zju.util;
 
 import com.alibaba.fastjson2.JSON;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class Initializer {
-    public Initializer(int totalArgs) {
+    //true表示处理笔记本
+    private final boolean flag;
+    public Initializer(int totalArgs, boolean flag) {
         this.totalArgs = totalArgs;
+        this.flag = flag;
     }
 
     public int totalArgs;
@@ -51,8 +55,8 @@ public class Initializer {
             return;
         }
         if (count == 0) {
-
-            for (int i = 0; i < initLaptopMap().get(integers.get(0)).size(); i++) {
+            int size = flag?initLaptopList().get(integers.get(0)).size():initTripList().get(integers.get(0)).size();
+            for (int i = 0; i < size; i++) {
                 ArrayList<Integer> list = new ArrayList<>() {{
                     for (int j = 0; j < totalArgs; j++) {
                         add(-1);
@@ -65,7 +69,8 @@ public class Initializer {
             int size = arrayLists.size();
             for (int i = 0; i < size; i++) {
                 ArrayList<Integer> remove = arrayLists.remove(0);
-                for (int j = 0; j < initLaptopMap().get(integers.get(count)).size(); j++) {
+                int temp = flag?initLaptopList().get(integers.get(count)).size():initTripList().get(integers.get(count)).size();
+                for (int j = 0; j < initLaptopList().get(integers.get(count)).size(); j++) {
                     String jsonString = JSON.toJSONString(remove);
                     ArrayList newList = JSON.parseObject(jsonString, ArrayList.class);
                     newList.set(integers.get(count), j);
@@ -82,7 +87,7 @@ public class Initializer {
      *
      * @return {@link Map}<{@link String}, {@link List}<{@link String}>>
      */
-    public static ArrayList<List<String>> initLaptopMap() {
+    public static ArrayList<List<String>> initLaptopList() {
         ArrayList<List<String>> laptopList = new ArrayList<>();
         laptopList.add(getBrandMap());
         laptopList.add(getAspectRatioMap());
@@ -95,6 +100,24 @@ public class Initializer {
         laptopList.add(getScreenSizeMap());
         laptopList.add(getScreenRefreshRateMap());
         return laptopList;
+    }
+
+    /**
+     * 初始化旅程Map
+     *
+     * @return {@link Map}<{@link String}, {@link List}<{@link String}>>
+     */
+    public static ArrayList<List> initTripList() {
+        ArrayList<List> tripList = new ArrayList<>();
+        tripList.add(getSource());
+        tripList.add(getDestination());
+        tripList.add(getDepartureDate());
+        tripList.add(getAdult());
+        tripList.add(getChild());
+        tripList.add(getBaby());
+        tripList.add(getAirClass());
+        tripList.add(getDirectFlight());
+        return tripList;
     }
 
     private static List<String> getBrandMap() {
@@ -236,4 +259,79 @@ public class Initializer {
         }};
     }
 
+    private static List<String> getSource(){
+        return new ArrayList<>() {{
+            add("北京");
+            add("上海");
+            add("广州");
+            add("深圳");
+            add("成都");
+            add("杭州");
+            add("武汉");
+            add("西安");
+            add("重庆");
+            add("长沙");
+            add("南京");
+            add("厦门");
+            add("昆明");
+            add("大连");
+            add("天津");
+            add("郑州");
+            add("三亚");
+            add("济南");
+            add("福州");
+        }};
+    }
+    private static List<String> getDestination(){
+        return getSource();
+    }
+    private static List<LocalDate> getDepartureDate(){
+        return new ArrayList<>() {{
+            add(LocalDate.now());
+            add(LocalDate.now().plusDays(1));
+            add(LocalDate.now().plusDays(2));
+            add(LocalDate.now().plusDays(3));
+            add(LocalDate.now().plusDays(4));
+            add(LocalDate.now().plusDays(5));
+            add(LocalDate.now().plusDays(6));
+            add(LocalDate.now().plusDays(7));
+        }};
+    }
+    private static List<Integer> getAdult(){
+        return new ArrayList<>() {{
+            add(1);
+            add(2);
+            add(3);
+            add(4);
+            add(5);
+        }};
+    }
+    private static List<Integer> getChild(){
+        return new ArrayList<>() {{
+            add(1);
+            add(2);
+            add(3);
+        }};
+    }
+    private static List<Integer> getBaby(){
+        return new ArrayList<>() {{
+            add(1);
+            add(2);
+            add(3);
+        }};
+    }
+    private static List<String> getAirClass(){
+        return new ArrayList<>() {{
+            add("经济/超经舱");
+            add("公务/头等舱");
+            add("公务舱");
+            add("头等舱");
+        }};
+    }
+    private static List<Boolean> getDirectFlight(){
+        return new ArrayList<>() {{
+            add(true);
+            add(false);
+        }};
+    }
 }

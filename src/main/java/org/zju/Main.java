@@ -1,6 +1,7 @@
 package org.zju;
 
 import org.zju.domain.Laptop;
+import org.zju.domain.Trip;
 import org.zju.util.Algorithm;
 import org.zju.util.ResultHandler;
 
@@ -10,14 +11,18 @@ public class Main {
     public static void main(String[] args) {
         int t = check_t(args);
         if (t != -1) {
-            Algorithm laotop = new Algorithm();
-            ArrayList<Laptop> laptops = laotop.run(t, Laptop.class);
+            Algorithm laotop = new Algorithm(t, true);
+            ArrayList<Laptop> laptops = laotop.run();
             ResultHandler.handleLaptop(laptops);
+            Algorithm trip = new Algorithm(t, false);
+            ArrayList<Trip> trips = trip.run();
+            ResultHandler.handleTrip(trips);
         }
     }
 
     /**
      * 校验参数t是否合法，将其约束在2-10
+     *
      * @param strings args
      * @return int 不合法则返回-1
      */

@@ -42,16 +42,16 @@ public class Laptop {
     public Laptop(int index,Integer s0, Integer s1, Integer s2, Integer s3, Integer s4, Integer s5,
                   Integer s6, Integer s7, Integer s8, Integer s9, Integer s10) {
         this.index = index;
-        this.brand = Initializer.initLaptopMap().get(0).get(s0);
-        this.aspectRatio = Initializer.initLaptopMap().get(1).get(s1);
-        this.energyEfficiencyClass = Initializer.initLaptopMap().get(2).get(s2);
-        this.SSD = Initializer.initLaptopMap().get(3).get(s3);
-        this.thicknesses = Initializer.initLaptopMap().get(4).get(s4);
-        this.fuselageMaterial = Initializer.initLaptopMap().get(5).get(s5);
-        this.mechanicalDrive = Initializer.initLaptopMap().get(6).get(s6);
-        this.RAM = Initializer.initLaptopMap().get(7).get(s7);
-        this.screenSize = Initializer.initLaptopMap().get(8).get(s8);
-        this.screenRefreshRate = Initializer.initLaptopMap().get(9).get(s9);
+        this.brand = Initializer.initLaptopList().get(0).get(s0);
+        this.aspectRatio = Initializer.initLaptopList().get(1).get(s1);
+        this.energyEfficiencyClass = Initializer.initLaptopList().get(2).get(s2);
+        this.SSD = Initializer.initLaptopList().get(3).get(s3);
+        this.thicknesses = Initializer.initLaptopList().get(4).get(s4);
+        this.fuselageMaterial = Initializer.initLaptopList().get(5).get(s5);
+        this.mechanicalDrive = Initializer.initLaptopList().get(6).get(s6);
+        this.RAM = Initializer.initLaptopList().get(7).get(s7);
+        this.screenSize = Initializer.initLaptopList().get(8).get(s8);
+        this.screenRefreshRate = Initializer.initLaptopList().get(9).get(s9);
         this.pairings = s10;
     }
 
