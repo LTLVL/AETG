@@ -9,15 +9,21 @@ import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) {
+        long start = System.currentTimeMillis();
         int t = check_t(args);
         if (t != -1) {
             Algorithm laotop = new Algorithm(t, true);
             ArrayList<Laptop> laptops = laotop.run();
-            ResultHandler.handleLaptop(laptops);
+            ResultHandler resultHandler = new ResultHandler(t);
+            resultHandler.handleLaptop(laptops);
+            long end = System.currentTimeMillis();
+            System.out.println("生成laptop测试用例共耗时：" + (end - start) + "ms");
             Algorithm trip = new Algorithm(t, false);
             ArrayList<Trip> trips = trip.run();
-            ResultHandler.handleTrip(trips);
+            resultHandler.handleTrip(trips);
+            System.out.println("生成trip测试用例共耗时：" + (System.currentTimeMillis() - end) + "ms");
         }
+
     }
 
     /**

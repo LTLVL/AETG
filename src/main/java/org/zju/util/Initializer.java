@@ -6,10 +6,12 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 public class Initializer {
     //true表示处理笔记本
     private final boolean flag;
+
     public Initializer(int totalArgs, boolean flag) {
         this.totalArgs = totalArgs;
         this.flag = flag;
@@ -55,7 +57,7 @@ public class Initializer {
             return;
         }
         if (count == 0) {
-            int size = flag?initLaptopList().get(integers.get(0)).size():initTripList().get(integers.get(0)).size();
+            int size = flag ? initLaptopList().get(integers.get(0)).size() : initTripList().get(integers.get(0)).size();
             for (int i = 0; i < size; i++) {
                 ArrayList<Integer> list = new ArrayList<>() {{
                     for (int j = 0; j < totalArgs; j++) {
@@ -69,8 +71,8 @@ public class Initializer {
             int size = arrayLists.size();
             for (int i = 0; i < size; i++) {
                 ArrayList<Integer> remove = arrayLists.remove(0);
-                int temp = flag?initLaptopList().get(integers.get(count)).size():initTripList().get(integers.get(count)).size();
-                for (int j = 0; j < initLaptopList().get(integers.get(count)).size(); j++) {
+                int temp = flag ? initLaptopList().get(integers.get(count)).size() : initTripList().get(integers.get(count)).size();
+                for (int j = 0; j < temp; j++) {
                     String jsonString = JSON.toJSONString(remove);
                     ArrayList newList = JSON.parseObject(jsonString, ArrayList.class);
                     newList.set(integers.get(count), j);
@@ -79,6 +81,9 @@ public class Initializer {
             }
         }
         arrayLists.removeIf(ArrayList::isEmpty);
+        if (!flag) {
+            arrayLists.removeIf(integers1 -> integers1.get(0) != -1 && integers1.get(0).equals(integers1.get(1)));
+        }
         initUncoveredPairs(integers, arrayLists, count + 1);
     }
 
@@ -259,7 +264,7 @@ public class Initializer {
         }};
     }
 
-    private static List<String> getSource(){
+    private static List<String> getSource() {
         return new ArrayList<>() {{
             add("北京");
             add("上海");
@@ -282,10 +287,12 @@ public class Initializer {
             add("福州");
         }};
     }
-    private static List<String> getDestination(){
+
+    private static List<String> getDestination() {
         return getSource();
     }
-    private static List<LocalDate> getDepartureDate(){
+
+    private static List<LocalDate> getDepartureDate() {
         return new ArrayList<>() {{
             add(LocalDate.now());
             add(LocalDate.now().plusDays(1));
@@ -297,7 +304,8 @@ public class Initializer {
             add(LocalDate.now().plusDays(7));
         }};
     }
-    private static List<Integer> getAdult(){
+
+    private static List<Integer> getAdult() {
         return new ArrayList<>() {{
             add(1);
             add(2);
@@ -306,21 +314,25 @@ public class Initializer {
             add(5);
         }};
     }
-    private static List<Integer> getChild(){
+
+    private static List<Integer> getChild() {
         return new ArrayList<>() {{
+            add(0);
+            add(1);
+            add(2);
+        }};
+    }
+
+    private static List<Integer> getBaby() {
+        return new ArrayList<>() {{
+            add(0);
             add(1);
             add(2);
             add(3);
         }};
     }
-    private static List<Integer> getBaby(){
-        return new ArrayList<>() {{
-            add(1);
-            add(2);
-            add(3);
-        }};
-    }
-    private static List<String> getAirClass(){
+
+    private static List<String> getAirClass() {
         return new ArrayList<>() {{
             add("经济/超经舱");
             add("公务/头等舱");
@@ -328,7 +340,8 @@ public class Initializer {
             add("头等舱");
         }};
     }
-    private static List<Boolean> getDirectFlight(){
+
+    private static List<Boolean> getDirectFlight() {
         return new ArrayList<>() {{
             add(true);
             add(false);

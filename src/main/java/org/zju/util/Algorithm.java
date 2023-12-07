@@ -14,7 +14,7 @@ public class Algorithm {
     private final HashMap<String, Integer> countTable = new HashMap<>();
     private final int M = 50;
     private final int totalArgs;
-    private int T = 0;
+    private final int T;
     private final boolean flag;
 
     public Algorithm(int t, boolean flag) {
@@ -40,7 +40,9 @@ public class Algorithm {
         //第一个测试用例固定选取
         Integer[] integers = new Integer[totalArgs];
         Arrays.fill(integers, 0);
-
+        if (!flag) {
+            integers[0] = 1;
+        }
 
         int pairing = updateUncoveredPairs(integers); //返回该测试用例覆盖的pair
         coveredPairs.add(integers);
@@ -91,7 +93,6 @@ public class Algorithm {
         for (Map.Entry<String, Integer> entry : list) {
             String[] split = entry.getKey().split(",");
             cases.add(new Case(Integer.parseInt(split[0]), Integer.parseInt(split[1]), entry.getValue()));
-
         }
         return cases;
     }
@@ -137,31 +138,29 @@ public class Algorithm {
         for (int i = 0; i < M; i++) {
             candidates.add(new Integer[totalArgs]);
         }
+        //选出最大覆盖
         Case aCase = cases.stream().max(Comparator.comparingInt(Case::getCount)).get();
-        List<Case> caseList = cases.stream().filter(new Predicate<Case>() {
-            @Override
-            public boolean test(Case case1) {
-                return case1.getCount() == aCase.getCount();
-            }
-        }).toList();
+        Case finalACase = aCase;
+        List<Case> caseList = cases.stream().filter(case1 -> case1.getCount() == finalACase.getCount()).toList();
+        Random random = new Random();
         for (int i = 0; i < candidates.size(); i++) {
-            candidates.get(i)[aCase.getPosition()] = caseList.get(i % caseList.size()).getValue();
+            int nextInt = random.nextInt(caseList.size());
+            aCase = caseList.get(nextInt);
+            candidates.get(i)[aCase.getPosition()]
+                    = aCase.getValue();
         }
 
         //获取M个候选用例
         for (int i = 0; i < totalArgs; i++) {
-            if (i != aCase.getPosition()) {
-                int finalI = i;
-//                List<Case> list = cases.stream().filter(aCase1 -> aCase1.getPosition() == finalI).toList();
-//                List<Case> sortedList = list.stream().sorted((o1, o2) -> o2.getCount() - o1.getCount()).toList();
-
-                for (int j = 0; j < 50; j++) {
+            int nextInt;
+            for (int j = 0; j < 50; j++) {
+                if (candidates.get(j)[i] == null) {
                     if (flag) {
-                        candidates.get(j)[i] = j % Initializer.initLaptopList().get(i).size();
+                        nextInt = random.nextInt(Initializer.initLaptopList().get(i).size());
                     } else {
-                        candidates.get(j)[i] = j % Initializer.initTripList().get(i).size();
+                        nextInt = random.nextInt(Initializer.initTripList().get(i).size());
                     }
-
+                    candidates.get(j)[i] = nextInt;
                 }
             }
         }
@@ -171,9 +170,18 @@ public class Algorithm {
             map.put(candidate, getCoveredPairs(candidate));
         }
         List<Map.Entry<Integer[], Integer>> list = new ArrayList<>(map.entrySet()); //转换为list
+
+
         //选出用例
-        list.sort((o1, o2) -> o2.getValue().compareTo(o1.getValue()));
-        Integer[] chosenCase = list.get(0).getKey();
+        Integer maxCoveredPairs = list.stream().max(Comparator.comparingInt(Map.Entry::getValue)).get().getValue();
+        if (maxCoveredPairs == 0) {
+            return cases;
+        }
+        List<Map.Entry<Integer[], Integer>> entryList = list.stream()
+                .filter(integerEntry -> Objects.equals(integerEntry.getValue(), maxCoveredPairs)).toList();
+        //选出用例
+        Integer[] chosenCase = entryList.get(random.nextInt(entryList.size())).getKey();
+
         int pairing = updateUncoveredPairs(chosenCase); //返回该测试用例覆盖的pair
         pairings.add(pairing);
         coveredPairs.add(chosenCase);

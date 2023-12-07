@@ -6,6 +6,11 @@ import org.zju.util.Initializer;
 
 import java.time.LocalDate;
 
+/**
+ * [19, 19, 8, 5, 3, 3, 4, 2]
+ * @author Tao
+ * @date 2023/12/07
+ */
 @Data
 public class Trip {
     @ExcelProperty("case")
